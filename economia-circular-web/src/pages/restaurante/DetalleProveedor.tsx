@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProveedorDetalle } from '../../api/proveedor.api';
+import { addToCartAPI } from '../../api/orden.api';
+import { useCartStore } from '../../store/cartStore';
 import ProductCard from '../../components/ProductCard';
 
 const DetalleProveedor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [proveedor, setProveedor] = useState<any>(null);
+  const addToCartState = useCartStore(state => state.addToCart);
 
   useEffect(() => {
     if (id) {
@@ -19,7 +22,12 @@ const DetalleProveedor = () => {
 
   return (
     <Box sx={{ p: 4 }}>
-      <Button onClick={() => navigate(-1)} sx={{ mb: 2 }}>← Volver al Explorador</Button>
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        <Button onClick={() => navigate(-1)}>← Volver al Explorador</Button>
+        <Button variant="contained" color="secondary" onClick={() => navigate('/cajero/carrito')}>
+          Ver Carrito
+        </Button>
+      </Box>
       
       <Box sx={{ mb: 4, bgcolor: 'white', p: 3, borderRadius: 2, boxShadow: 1 }}>
         <Typography variant="h4" fontWeight="bold">{proveedor.Usuario?.nombre}</Typography>
@@ -42,7 +50,22 @@ const DetalleProveedor = () => {
                 precioUnitario={prod.precioUnitario}
                 maxUsosEstimado={prod.maxUsosEstimado}
                 imagenUrl={prod.imagenUrl}
-                onAddToCart={() => alert('Fase 3: Añadido al carrito')}
+                onAddToCart={async () => {
+                  const item = {
+                    productoId: prod.id,
+                    nombre: prod.nombre,
+                    cantidad: 1, // Por simplicidad, agregamos de a 1
+                    precioUnitario: prod.precioUnitario,
+                    proveedorId: proveedor.id
+                  };
+                  addToCartState(item);
+                  try {
+                    await addToCartAPI(item);
+                    alert('Añadido al carrito');
+                  } catch (e) {
+                    console.error('Error sync API', e);
+                  }
+                }}
               />
             </Grid>
           ))

@@ -5,6 +5,9 @@ import ExploradorProveedores from './pages/restaurante/ExploradorProveedores';
 import DetalleProveedor from './pages/restaurante/DetalleProveedor';
 import ProveedorDashboard from './pages/proveedor/ProveedorDashboard';
 import AdminProveedores from './pages/admin/AdminProveedores';
+import CarritoCompras from './pages/restaurante/CarritoCompras';
+import MisOrdenes from './pages/restaurante/MisOrdenes';
+import PedidosEntrantes from './pages/proveedor/PedidosEntrantes';
 
 // Layouts Placeholder
 const AdminLayout = () => <div>Admin Dashboard (Work in progress)</div>;
@@ -42,7 +45,10 @@ function App() {
 
         <Route path="/proveedor/*" element={
           <ProtectedRoute allowedRoles={['PROVEEDOR']}>
-            <ProveedorDashboard />
+            <Routes>
+              <Route path="/" element={<ProveedorDashboard />} />
+              <Route path="pedidos" element={<PedidosEntrantes />} />
+            </Routes>
           </ProtectedRoute>
         } />
 
@@ -51,6 +57,8 @@ function App() {
             <Routes>
               <Route path="proveedores" element={<ExploradorProveedores />} />
               <Route path="proveedores/:id" element={<DetalleProveedor />} />
+              <Route path="carrito" element={<CarritoCompras />} />
+              <Route path="ordenes" element={<MisOrdenes />} />
               <Route path="*" element={<CajeroLayout />} />
             </Routes>
           </ProtectedRoute>

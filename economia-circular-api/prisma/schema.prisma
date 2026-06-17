@@ -39,6 +39,8 @@ model Restaurante {
   updatedAt      DateTime @updatedAt
 
   Administrador  Usuario  @relation(fields: [administradorId], references: [id])
+  OrdenesCompra  OrdenCompra[]
+  Envases        Envase[]
 }
 
 model Cliente {
@@ -67,6 +69,7 @@ model ProveedorPerfil {
 
   Usuario        Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   Productos      ProductoCatalogo[]
+  OrdenesCompra  OrdenCompra[]
 }
 
 model ProductoCatalogo {
@@ -85,4 +88,44 @@ model ProductoCatalogo {
   updatedAt       DateTime @updatedAt
 
   Proveedor       ProveedorPerfil @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  DetallesOrden   DetalleOrden[]
+  Envases         Envase[]
+}
+
+model OrdenCompra {
+  id              String   @id @default(uuid())
+  restauranteId   String
+  proveedorId     String
+  estado          String   @default("PENDIENTE") // PENDIENTE, ACEPTADA, EN_TRANSITO, ENTREGADA, CANCELADA
+  total           Float
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  Restaurante     Restaurante      @relation(fields: [restauranteId], references: [id], onDelete: Cascade)
+  Proveedor       ProveedorPerfil  @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  Detalles        DetalleOrden[]
+}
+
+model DetalleOrden {
+  id              String   @id @default(uuid())
+  ordenId         String
+  productoId      String
+  cantidad        Int
+  precioUnitario  Float
+
+  Orden           OrdenCompra      @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+  Producto        ProductoCatalogo @relation(fields: [productoId], references: [id], onDelete: Cascade)
+}
+
+model Envase {
+  qrCode          String   @id // El QR actúa como identificador único
+  productoId      String
+  restauranteId   String?
+  estado          String   @default("INACTIVO") // INACTIVO, EN_USO, LAVADO, DESECHADO
+  usosActuales    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  Producto        ProductoCatalogo @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  Restaurante     Restaurante?     @relation(fields: [restauranteId], references: [id], onDelete: SetNull)
 }
