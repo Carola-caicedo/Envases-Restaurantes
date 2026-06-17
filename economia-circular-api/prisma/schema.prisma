@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Usuario {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  nombre       String
+  apellido     String?
+  telefono     String?
+  rol          String
+  activo       Boolean  @default(true)
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  Restaurante Restaurante[]
+  Cliente     Cliente?
+}
+
+model Restaurante {
+  id             String   @id @default(uuid())
+  nombre         String
+  direccion      String?
+  telefono       String?
+  nit            String?
+  administradorId String
+  activo         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  Administrador  Usuario  @relation(fields: [administradorId], references: [id])
+}
+
+model Cliente {
+  id                 String   @id @default(uuid())
+  usuarioId          String   @unique
+  nombre             String
+  email              String?
+  telefono           String?
+  ecoPuntos          Int      @default(0)
+  depositoAcumulado  Float    @default(0.00)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  Usuario            Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+}
