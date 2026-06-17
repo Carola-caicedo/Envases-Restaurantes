@@ -1,6 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import { useAuthStore } from './store/authStore';
+import ExploradorProveedores from './pages/restaurante/ExploradorProveedores';
+import DetalleProveedor from './pages/restaurante/DetalleProveedor';
+import ProveedorDashboard from './pages/proveedor/ProveedorDashboard';
+import AdminProveedores from './pages/admin/AdminProveedores';
 
 // Layouts Placeholder
 const AdminLayout = () => <div>Admin Dashboard (Work in progress)</div>;
@@ -29,19 +33,26 @@ function App() {
         
         <Route path="/admin/*" element={
           <ProtectedRoute allowedRoles={['ADMIN']}>
-            <AdminLayout />
+            <Routes>
+              <Route path="proveedores" element={<AdminProveedores />} />
+              <Route path="*" element={<AdminLayout />} />
+            </Routes>
           </ProtectedRoute>
         } />
 
         <Route path="/proveedor/*" element={
           <ProtectedRoute allowedRoles={['PROVEEDOR']}>
-            <ProveedorLayout />
+            <ProveedorDashboard />
           </ProtectedRoute>
         } />
 
         <Route path="/cajero/*" element={
-          <ProtectedRoute allowedRoles={['CAJERO']}>
-            <CajeroLayout />
+          <ProtectedRoute allowedRoles={['CAJERO', 'ADMIN']}>
+            <Routes>
+              <Route path="proveedores" element={<ExploradorProveedores />} />
+              <Route path="proveedores/:id" element={<DetalleProveedor />} />
+              <Route path="*" element={<CajeroLayout />} />
+            </Routes>
           </ProtectedRoute>
         } />
 

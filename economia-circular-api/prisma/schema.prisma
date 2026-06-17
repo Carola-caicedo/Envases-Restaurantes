@@ -24,6 +24,7 @@ model Usuario {
 
   Restaurante Restaurante[]
   Cliente     Cliente?
+  Proveedor   ProveedorPerfil?
 }
 
 model Restaurante {
@@ -52,4 +53,36 @@ model Cliente {
   updatedAt          DateTime @updatedAt
 
   Usuario            Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+}
+
+model ProveedorPerfil {
+  id             String   @id @default(uuid())
+  usuarioId      String   @unique
+  nit            String?
+  direccion      String?
+  descripcion    String?
+  logoUrl        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  Usuario        Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  Productos      ProductoCatalogo[]
+}
+
+model ProductoCatalogo {
+  id              String   @id @default(uuid())
+  proveedorId     String
+  nombre          String
+  descripcion     String?
+  material        String
+  capacidadMl     Int?
+  dimensiones     String?
+  precioUnitario  Float
+  maxUsosEstimado Int
+  imagenUrl       String?
+  activo          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  Proveedor       ProveedorPerfil @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
 }
