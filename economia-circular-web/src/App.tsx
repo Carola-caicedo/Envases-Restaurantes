@@ -10,6 +10,7 @@ import MisOrdenes from './pages/restaurante/MisOrdenes';
 import PedidosEntrantes from './pages/proveedor/PedidosEntrantes';
 import EscanerQR from './pages/restaurante/EscanerQR';
 import HistorialTrazabilidad from './pages/restaurante/HistorialTrazabilidad';
+import RestauranteDashboard from './pages/restaurante/RestauranteDashboard';
 import Navbar from './components/Navbar';
 
 // Layouts Placeholder
@@ -65,7 +66,7 @@ function App() {
               <Route path="ordenes" element={<MisOrdenes />} />
               <Route path="escaner" element={<EscanerQR />} />
               <Route path="trazabilidad" element={<HistorialTrazabilidad />} />
-              <Route path="*" element={<CajeroLayout />} />
+              <Route path="/" element={<RestauranteDashboard />} />
             </Routes>
           </ProtectedRoute>
         } />
