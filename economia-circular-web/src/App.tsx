@@ -10,6 +10,7 @@ import MisOrdenes from './pages/restaurante/MisOrdenes';
 import PedidosEntrantes from './pages/proveedor/PedidosEntrantes';
 import EscanerQR from './pages/restaurante/EscanerQR';
 import HistorialTrazabilidad from './pages/restaurante/HistorialTrazabilidad';
+import Navbar from './components/Navbar';
 
 // Layouts Placeholder
 const AdminLayout = () => <div>Admin Dashboard (Work in progress)</div>;
@@ -33,6 +34,7 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: JSX.Element, all
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route path="/login" element={<Login />} />
         

@@ -23,8 +23,9 @@ model Usuario {
   updatedAt    DateTime @updatedAt
 
   Restaurante Restaurante[]
-  Cliente     Cliente?
-  Proveedor   ProveedorPerfil?
+  Cliente       Cliente?
+  Proveedor     ProveedorPerfil?
+  Notificaciones Notificacion[]
 }
 
 model Restaurante {
@@ -145,4 +146,16 @@ model TransaccionEnvase {
   Envase          Envase   @relation(fields: [envaseQr], references: [qrCode], onDelete: Cascade)
   Restaurante     Restaurante @relation(fields: [restauranteId], references: [id], onDelete: Cascade)
   Cliente         Cliente? @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+}
+
+model Notificacion {
+  id          String   @id @default(uuid())
+  usuarioId   String
+  titulo      String
+  mensaje     String
+  leida       Boolean  @default(false)
+  tipo        String   @default("INFO") // INFO, ALERTA, URGENTE
+  createdAt   DateTime @default(now())
+
+  Usuario     Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }

@@ -3,6 +3,7 @@ import { AppError } from '../../middlewares/error.middleware';
 import { clearCart, getCart } from './carrito.service';
 import { v4 as uuidv4 } from 'uuid';
 import { generarQrBase64 } from '../../utils/qr.util';
+import * as notificacionService from '../notificacion/notificacion.service';
 
 export const crearOrden = async (restauranteId: string, proveedorId: string) => {
   const cart = getCart(restauranteId);
@@ -44,6 +45,16 @@ export const crearOrden = async (restauranteId: string, proveedorId: string) => 
 
   // Limpiamos todo el carrito en esta versión simplificada
   clearCart(restauranteId);
+
+  // Crear notificación para el proveedor
+  const prov = await prisma.proveedorPerfil.findUnique({ where: { id: proveedorId } });
+  if (prov) {
+    await notificacionService.crearNotificacion(
+      prov.usuarioId,
+      'Nueva Orden de Compra',
+      `Has recibido una nueva orden de envases por $${total.toLocaleString()}`
+    );
+  }
 
   return orden;
 };
@@ -98,6 +109,16 @@ export const aceptarYDespacharOrden = async (ordenId: string, proveedorId: strin
       }
     }
   });
+
+  // Notificar al restaurante
+  const rest = await prisma.restaurante.findUnique({ where: { id: orden.restauranteId } });
+  if (rest) {
+    await notificacionService.crearNotificacion(
+      rest.administradorId,
+      'Orden Despachada',
+      `Tu orden de envases #${orden.id.substring(0,8)} ha sido despachada por el proveedor.`
+    );
+  }
 
   return { ordenId, envases: envasesGenerados };
 };

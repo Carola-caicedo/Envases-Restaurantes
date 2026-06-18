@@ -7,6 +7,7 @@ import authRoutes from './modules/auth/auth.routes';
 import proveedorRoutes from './modules/proveedor/proveedor.routes';
 import ordenRoutes from './modules/orden/orden.routes';
 import trazabilidadRoutes from './modules/trazabilidad/trazabilidad.routes';
+import notificacionRoutes from './modules/notificacion/notificacion.routes';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/proveedores', proveedorRoutes);
 app.use('/api/v1/ordenes', ordenRoutes);
 app.use('/api/v1/trazabilidad', trazabilidadRoutes);
+app.use('/api/v1/notificaciones', notificacionRoutes);
 
 // Manejo de errores centralizado
 app.use(errorMiddleware);
