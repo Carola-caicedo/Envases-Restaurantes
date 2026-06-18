@@ -8,6 +8,8 @@ import AdminProveedores from './pages/admin/AdminProveedores';
 import CarritoCompras from './pages/restaurante/CarritoCompras';
 import MisOrdenes from './pages/restaurante/MisOrdenes';
 import PedidosEntrantes from './pages/proveedor/PedidosEntrantes';
+import EscanerQR from './pages/restaurante/EscanerQR';
+import HistorialTrazabilidad from './pages/restaurante/HistorialTrazabilidad';
 
 // Layouts Placeholder
 const AdminLayout = () => <div>Admin Dashboard (Work in progress)</div>;
@@ -59,6 +61,8 @@ function App() {
               <Route path="proveedores/:id" element={<DetalleProveedor />} />
               <Route path="carrito" element={<CarritoCompras />} />
               <Route path="ordenes" element={<MisOrdenes />} />
+              <Route path="escaner" element={<EscanerQR />} />
+              <Route path="trazabilidad" element={<HistorialTrazabilidad />} />
               <Route path="*" element={<CajeroLayout />} />
             </Routes>
           </ProtectedRoute>
