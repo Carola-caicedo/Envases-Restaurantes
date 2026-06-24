@@ -11,6 +11,7 @@ router.get('/:id', authenticate, proveedorController.obtenerDetalle);
 
 // Solo Admin o Proveedor
 router.post('/perfil', authenticate, authorize(['ADMIN', 'PROVEEDOR']), proveedorController.crearPerfil);
+router.get('/mi-catalogo/productos', authenticate, authorize(['PROVEEDOR']), proveedorController.getMiCatalogo);
 
 // Solo el proveedor puede subir productos a su catálogo
 // upload.single('imagen') procesa el archivo multipart y lo deja en req.file

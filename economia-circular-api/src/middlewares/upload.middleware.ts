@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 // Almacenamiento local para desarrollo (reemplazo de MinIO sin Docker)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../../public/uploads'));
+    cb(null, path.join(__dirname, '../../public/uploads'));
   },
   filename: (req, file, cb) => {
     const extension = path.extname(file.originalname);

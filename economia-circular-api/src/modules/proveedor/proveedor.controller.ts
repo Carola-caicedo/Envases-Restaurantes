@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as proveedorService from './proveedor.service';
 import * as productoService from './producto.service';
+import prisma from '../../config/prisma';
 
 export const listarProveedores = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -20,11 +21,31 @@ export const obtenerDetalle = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+export const getMiCatalogo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const perfil = await prisma.proveedorPerfil.findUnique({
+      where: { usuarioId: req.user!.userId },
+      include: {
+        Productos: {
+          where: { activo: true }
+        }
+      }
+    });
+
+    if (!perfil) {
+      return res.status(403).json({ success: false, message: 'Perfil de proveedor no encontrado' });
+    }
+
+    res.json({ success: true, data: perfil.Productos });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const crearProducto = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // req.user.userId debería corresponder al usuario logueado (proveedor)
     // Buscamos su perfil de proveedor
-    import prisma from '../../config/prisma';
     const perfil = await prisma.proveedorPerfil.findUnique({ where: { usuarioId: req.user!.userId } });
     
     if (!perfil) {

@@ -23,3 +23,8 @@ export const crearPerfilProveedor = async (perfilData: any) => {
   const { data } = await api.post('/proveedores/perfil', perfilData);
   return data.data;
 };
+
+export const getMiCatalogo = async () => {
+  const { data } = await api.get('/proveedores/mi-catalogo/productos');
+  return data.data;
+};

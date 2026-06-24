@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { getProveedores, crearPerfilProveedor } from '../../api/proveedor.api';
 
 const AdminProveedores = () => {

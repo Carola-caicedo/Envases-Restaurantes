@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, TextField, Grid, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useAuthStore } from '../../store/authStore';
-import { crearProducto } from '../../api/proveedor.api';
+import { crearProducto, getMiCatalogo } from '../../api/proveedor.api';
+import ProductCard from '../../components/ProductCard';
 
 const ProveedorDashboard = () => {
   const { user } = useAuthStore();
@@ -13,6 +14,20 @@ const ProveedorDashboard = () => {
     maxUsosEstimado: '',
   });
   const [imagen, setImagen] = useState<File | null>(null);
+  const [productos, setProductos] = useState<any[]>([]);
+
+  const fetchCatalogo = async () => {
+    try {
+      const data = await getMiCatalogo();
+      setProductos(data || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchCatalogo();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +39,7 @@ const ProveedorDashboard = () => {
       await crearProducto(data);
       alert('Producto creado exitosamente');
       setOpenForm(false);
-      // Aquí recargaríamos el catálogo
+      fetchCatalogo(); // Recargar el catálogo
     } catch (err) {
       alert('Error al crear producto');
       console.error(err);
@@ -38,9 +53,26 @@ const ProveedorDashboard = () => {
 
       <Button variant="contained" onClick={() => setOpenForm(true)}>+ Añadir Envase al Catálogo</Button>
 
-      {/* Catálogo del Proveedor (Pendiente visualización en Fase 3) */}
+      {/* Catálogo del Proveedor */}
       <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" color="text.secondary">Tus productos activos aparecerán aquí.</Typography>
+        <Typography variant="h5" sx={{ mb: 2 }}>Tus Envases Activos</Typography>
+        {productos.length === 0 ? (
+          <Typography color="text.secondary">No tienes productos en tu catálogo.</Typography>
+        ) : (
+          <Grid container spacing={3}>
+            {productos.map(p => (
+              <Grid item xs={12} sm={6} md={4} key={p.id}>
+                <ProductCard 
+                  nombre={p.nombre}
+                  material={p.material}
+                  precioUnitario={p.precioUnitario}
+                  maxUsosEstimado={p.maxUsosEstimado}
+                  imagenUrl={p.imagenUrl}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Box>
 
       {/* Modal Formulario */}
