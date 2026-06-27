@@ -22,6 +22,7 @@ import SalidaEnvasePage from './pages/cajero/SalidaEnvasePage';
 
 // Operario pages
 import DevolucionPage from './pages/operario/DevolucionPage';
+import BajaEnvasePage from './pages/operario/BajaEnvasePage';
 
 // Proveedor pages
 import PerfilPage from './pages/proveedor/PerfilPage';
@@ -128,7 +129,7 @@ export default function App() {
               {/* ── OPERARIO ───────────────────────────────────────────── */}
               <Route element={<ProtectedRoute allowedRoles={['OPERARIO']} />}>
                 <Route path="/operario/devolucion" element={<DevolucionPage />} />
-                {/* <Route path="/operario/baja" element={<BajaEnvasePage />} /> */}
+                <Route path="/operario/baja" element={<BajaEnvasePage />} />
               </Route>
 
               {/* ── PROVEEDOR ──────────────────────────────────────────── */}

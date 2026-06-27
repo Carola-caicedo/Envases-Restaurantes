@@ -112,4 +112,61 @@ export interface OrdenCompra {
   detalles: DetalleOrden[];
 }
 
+// ─── Envases y Trazabilidad ──────────────────────────────────────────────────
+export type EstadoEnvase = 'DISPONIBLE' | 'EN_USO' | 'EN_LAVADO' | 'FUERA_CIRCULACION' | 'PERDIDO';
 
+export interface Envase {
+  id: string;
+  codigoQr: string;
+  idAlfanumerico: string;
+  productoCatalogoId: string;
+  ordenOrigenId: string;
+  restauranteId: string;
+  estado: EstadoEnvase;
+  cantidadUsos: number;
+  maxUsos: number;
+  fechaRegistro: string;
+  ultimoCambioEstado: string;
+  // Extras para la UI
+  nombreProducto: string;
+  material: MaterialEnvase;
+  capacidadMl: number;
+}
+
+export type TipoTransaccion = 'SALIDA' | 'DEVOLUCION';
+
+export interface TransaccionEnvase {
+  id: string;
+  envaseId: string;
+  clienteId: string;
+  cajeroId: string;
+  operarioDevolucionId?: string;
+  tipo: TipoTransaccion;
+  fechaSalida: string;
+  fechaDevolucion?: string;
+  depositoRetenido: number;
+  depositoLiberado: boolean;
+  ecoPuntosAsignados: number;
+  cicloCerrado: boolean;
+}
+
+export type MotivoBaja = 'ROTO' | 'MANCHADO' | 'DESGASTE_NATURAL' | 'EXTRAVIADO' | 'CICLO_COMPLETADO';
+
+export interface BajaEnvase {
+  id: string;
+  envaseId: string;
+  operarioId: string;
+  motivo: MotivoBaja;
+  observaciones: string;
+  fechaBaja: string;
+}
+
+export interface Cliente {
+  id: string;
+  usuarioId: string;
+  nombre: string;
+  email: string;
+  telefono: string;
+  ecoPuntos: number;
+  depositoAcumulado: number;
+}
