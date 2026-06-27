@@ -13,6 +13,8 @@ import LoginPage from './pages/auth/LoginPage';
 
 // Admin pages
 import DashboardPage from './pages/admin/DashboardPage';
+import CarritoPage from './pages/admin/CarritoPage';
+import OrdenesPage from './pages/admin/OrdenesPage';
 
 // Cajero pages
 import SalidaEnvasePage from './pages/cajero/SalidaEnvasePage';
@@ -104,10 +106,10 @@ export default function App() {
               {/* ── ADMIN ──────────────────────────────────────────────── */}
               <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
                 <Route path="/admin/dashboard" element={<DashboardPage />} />
+                <Route path="/admin/carrito" element={<CarritoPage />} />
+                <Route path="/admin/ordenes" element={<OrdenesPage />} />
                 {/* Próximas etapas: */}
                 {/* <Route path="/admin/proveedores" element={<ProveedoresPage />} /> */}
-                {/* <Route path="/admin/carrito" element={<CarritoPage />} /> */}
-                {/* <Route path="/admin/ordenes" element={<OrdenesPage />} /> */}
                 {/* <Route path="/admin/inventario" element={<InventarioPage />} /> */}
                 {/* <Route path="/admin/reportes" element={<ReportesPage />} /> */}
                 {/* <Route path="/admin/configuracion" element={<ConfiguracionPage />} /> */}

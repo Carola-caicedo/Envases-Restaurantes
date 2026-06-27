@@ -71,3 +71,45 @@ export interface ProductoCatalogo {
 
 export type MaterialEnvase = 'VIDRIO' | 'ACERO_INOXIDABLE' | 'PLASTICO_REUTILIZABLE' | 'BAMBU' | 'CERAMICA';
 
+// ─── Carrito de compras ───────────────────────────────────────────────────────
+export interface CartItem {
+  producto: ProductoCatalogo;
+  cantidad: number;
+}
+
+// ─── Órdenes de compra ────────────────────────────────────────────────────────
+export type EstadoOrden =
+  | 'PENDIENTE'
+  | 'ACEPTADA'
+  | 'EN_PREPARACION'
+  | 'EN_TRANSITO'
+  | 'COMPLETADA'
+  | 'CANCELADA';
+
+export interface DetalleOrden {
+  id: string;
+  ordenId: string;
+  productoId: string;
+  productoNombre: string;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+}
+
+export interface OrdenCompra {
+  id: string;
+  numeroOrden: string;
+  administradorId: string;
+  proveedorId: string;
+  proveedorNombre: string;
+  estado: EstadoOrden;
+  numeroEnvio?: string;
+  total: number;
+  motivoCancelacion?: string;
+  fechaLimiteRespuesta?: string;
+  createdAt: string;
+  updatedAt: string;
+  detalles: DetalleOrden[];
+}
+
+
