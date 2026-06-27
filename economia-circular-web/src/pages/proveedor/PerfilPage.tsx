@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Box, Typography, Paper, Grid, TextField, Button, Switch,
+  Box, Typography, Paper, TextField, Button, Switch,
   FormControlLabel, Chip, Avatar, Divider, IconButton,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Dialog, DialogTitle, DialogContent, DialogActions,
@@ -141,12 +141,12 @@ export default function PerfilPage() {
 
   // ── Forms ────────────────────────────────────────────────────────────────────
   const perfilForm = useForm<PerfilForm>({
-    resolver: zodResolver(perfilSchema),
+    resolver: zodResolver(perfilSchema) as any,
     defaultValues: { nombreEmpresa: perfil.nombreEmpresa, descripcion: perfil.descripcion, direccion: perfil.direccion, condicionesComerciales: perfil.condicionesComerciales, catalogoActivo: perfil.catalogoActivo },
   });
 
   const productoForm = useForm<ProductoForm>({
-    resolver: zodResolver(productoSchema),
+    resolver: zodResolver(productoSchema) as any,
     defaultValues: { nombre: '', descripcion: '', precio: 0, material: '', capacidadMl: 250, maxUsosEstimado: 100, imagenUrl: '', activo: true },
   });
 
@@ -319,33 +319,47 @@ export default function PerfilPage() {
           {/* Vista edición */}
           {editingPerfil ? (
             <Box component="form" onSubmit={perfilForm.handleSubmit(savePerfil)}>
-              <Grid container spacing={2.5}>
-                <Grid item xs={12} md={6}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 2.5,
+                }}
+              >
+                <Box>
                   <Controller name="nombreEmpresa" control={perfilForm.control} render={({ field, fieldState }) => (
-                    <TextField {...field} fullWidth label="Nombre de empresa *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
+                    <TextField {...field} variant="outlined" fullWidth label="Nombre de empresa *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                   )} />
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Box>
+                <Box>
                   <Controller name="direccion" control={perfilForm.control} render={({ field, fieldState }) => (
-                    <TextField {...field} fullWidth label="Dirección *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
+                    <TextField {...field} variant="outlined" fullWidth label="Dirección *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                   )} />
-                </Grid>
-                <Grid item xs={12}>
+                </Box>
+                <Box sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
                   <Controller name="descripcion" control={perfilForm.control} render={({ field, fieldState }) => (
-                    <TextField {...field} fullWidth multiline rows={3} label="Descripción de la empresa *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
+                    <TextField {...field} variant="outlined" fullWidth multiline rows={3} label="Descripción de la empresa *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                   )} />
-                </Grid>
-                <Grid item xs={12}>
+                </Box>
+                <Box sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
                   <Controller name="condicionesComerciales" control={perfilForm.control} render={({ field, fieldState }) => (
-                    <TextField {...field} fullWidth multiline rows={3}
+                    <TextField {...field} variant="outlined" fullWidth multiline rows={3}
                       label="Condiciones comerciales *"
                       placeholder="Plazo de pago, mínimo de orden, políticas de devolución..."
                       error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx}
-                      InputProps={{ startAdornment: (<InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}><ShippingIcon sx={{ color: 'rgba(255,255,255,0.3)', fontSize: 18 }} /></InputAdornment>) }}
+                      slotProps={{
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}>
+                              <ShippingIcon sx={{ color: 'rgba(255,255,255,0.3)', fontSize: 18 }} />
+                            </InputAdornment>
+                          )
+                        }
+                      }}
                     />
                   )} />
-                </Grid>
-                <Grid item xs={12}>
+                </Box>
+                <Box sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
                   <Controller name="catalogoActivo" control={perfilForm.control} render={({ field }) => (
                     <FormControlLabel
                       control={<Switch checked={field.value} onChange={field.onChange} sx={switchSx} />}
@@ -358,8 +372,8 @@ export default function PerfilPage() {
                       sx={{ alignItems: 'flex-start', mx: 0 }}
                     />
                   )} />
-                </Grid>
-              </Grid>
+                </Box>
+              </Box>
 
               <Box sx={{ display: 'flex', gap: 1.5, mt: 3, justifyContent: 'flex-end' }}>
                 <Button startIcon={<CancelIcon />} onClick={cancelEdit} disabled={savingPerfil}
@@ -375,17 +389,23 @@ export default function PerfilPage() {
             </Box>
           ) : (
             /* Vista solo lectura */
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                gap: 3,
+              }}
+            >
+              <Box>
                 <InfoField label="Dirección" value={perfil.direccion} />
-              </Grid>
-              <Grid item xs={12}>
+              </Box>
+              <Box sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
                 <InfoField label="Descripción" value={perfil.descripcion} />
-              </Grid>
-              <Grid item xs={12}>
+              </Box>
+              <Box sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
                 <InfoField label="Condiciones comerciales" value={perfil.condicionesComerciales} />
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           )}
         </Paper>
       )}
@@ -525,7 +545,12 @@ export default function PerfilPage() {
           MODAL — Crear / Editar producto
       ══════════════════════════════════════════════════════════════════════ */}
       <Dialog open={productoModal.open} onClose={closeModal} maxWidth="sm" fullWidth
-        PaperProps={{ sx: { bgcolor: '#131c27', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backgroundImage: 'none' } }}>
+        slotProps={{
+          paper: {
+            sx: { bgcolor: '#131c27', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backgroundImage: 'none' }
+          }
+        }}
+      >
         <DialogTitle sx={{ color: 'white', fontWeight: 700, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
           {productoModal.editing ? <EditIcon sx={{ color: G[400] }} /> : <AddIcon sx={{ color: G[400] }} />}
           {productoModal.editing ? 'Editar producto' : 'Nuevo producto'}
@@ -534,25 +559,31 @@ export default function PerfilPage() {
 
         <DialogContent sx={{ pt: 2.5 }}>
           <Box component="form" id="form-producto" onSubmit={productoForm.handleSubmit(saveProducto)}>
-            <Grid container spacing={2}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                gap: 2,
+              }}
+            >
               {/* Nombre */}
-              <Grid item xs={12}>
+              <Box sx={{ gridColumn: { xs: 'span 1', sm: 'span 2' } }}>
                 <Controller name="nombre" control={productoForm.control} render={({ field, fieldState }) => (
-                  <TextField {...field} fullWidth label="Nombre del producto *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
+                  <TextField {...field} variant="outlined" fullWidth label="Nombre del producto *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                 )} />
-              </Grid>
+              </Box>
 
               {/* Descripción */}
-              <Grid item xs={12}>
+              <Box sx={{ gridColumn: { xs: 'span 1', sm: 'span 2' } }}>
                 <Controller name="descripcion" control={productoForm.control} render={({ field, fieldState }) => (
-                  <TextField {...field} fullWidth multiline rows={2} label="Descripción *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
+                  <TextField {...field} variant="outlined" fullWidth multiline rows={2} label="Descripción *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                 )} />
-              </Grid>
+              </Box>
 
               {/* Material */}
-              <Grid item xs={12} sm={6}>
+              <Box>
                 <Controller name="material" control={productoForm.control} render={({ field, fieldState }) => (
-                  <TextField {...field} fullWidth select label="Material *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx}>
+                  <TextField {...field} variant="outlined" fullWidth select label="Material *" error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx}>
                     {MATERIALES.map((m) => (
                       <MenuItem key={m.value} value={m.value}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -563,54 +594,53 @@ export default function PerfilPage() {
                     ))}
                   </TextField>
                 )} />
-              </Grid>
+              </Box>
 
               {/* Precio */}
-              <Grid item xs={12} sm={6}>
+              <Box>
                 <Controller name="precio" control={productoForm.control} render={({ field, fieldState }) => (
-                  <TextField {...field} fullWidth type="number" label="Precio unitario (COP) *"
-                    InputProps={{ startAdornment: <InputAdornment position="start" sx={{ color: 'rgba(255,255,255,0.4)' }}>$</InputAdornment> }}
+                  <TextField {...field} variant="outlined" fullWidth type="number" label="Precio unitario (COP) *"
+                    slotProps={{ input: { startAdornment: <InputAdornment position="start" sx={{ color: 'rgba(255,255,255,0.4)' }}>$</InputAdornment> } }}
                     error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                 )} />
-              </Grid>
+              </Box>
 
               {/* Capacidad */}
-              <Grid item xs={12} sm={6}>
+              <Box>
                 <Controller name="capacidadMl" control={productoForm.control} render={({ field, fieldState }) => (
-                  <TextField {...field} fullWidth type="number" label="Capacidad *"
-                    InputProps={{ endAdornment: <InputAdornment position="end" sx={{ color: 'rgba(255,255,255,0.4)' }}>ml</InputAdornment> }}
+                  <TextField {...field} variant="outlined" fullWidth type="number" label="Capacidad *"
+                    slotProps={{ input: { endAdornment: <InputAdornment position="end" sx={{ color: 'rgba(255,255,255,0.4)' }}>ml</InputAdornment> } }}
                     error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                 )} />
-              </Grid>
+              </Box>
 
               {/* Usos estimados */}
-              <Grid item xs={12} sm={6}>
+              <Box>
                 <Controller name="maxUsosEstimado" control={productoForm.control} render={({ field, fieldState }) => (
-                  <TextField {...field} fullWidth type="number" label="Usos máx. estimados *"
-                    InputProps={{ endAdornment: (<InputAdornment position="end"><Tooltip title="Ciclos de uso antes de dar de baja el envase"><InfoIcon sx={{ fontSize: 16, color: 'rgba(255,255,255,0.3)', cursor: 'help' }} /></Tooltip></InputAdornment>) }}
+                  <TextField {...field} variant="outlined" fullWidth type="number" label="Usos máx. estimados *"
+                    slotProps={{ input: { endAdornment: (<InputAdornment position="end"><Tooltip title="Ciclos de uso antes de dar de baja el envase"><InfoIcon sx={{ fontSize: 16, color: 'rgba(255,255,255,0.3)', cursor: 'help' }} /></Tooltip></InputAdornment>) } }}
                     error={!!fieldState.error} helperText={fieldState.error?.message} sx={fieldSx} />
                 )} />
-              </Grid>
+              </Box>
 
-              {/* URL imagen */}
-              <Grid item xs={12}>
+              <Box sx={{ gridColumn: { xs: 'span 1', sm: 'span 2' } }}>
                 <Controller name="imagenUrl" control={productoForm.control} render={({ field }) => (
-                  <TextField {...field} fullWidth label="URL de imagen (opcional)" placeholder="https://..."
-                    InputProps={{ startAdornment: <InputAdornment position="start"><PhotoIcon sx={{ fontSize: 18, color: 'rgba(255,255,255,0.3)' }} /></InputAdornment> }}
+                  <TextField {...field} variant="outlined" fullWidth label="URL de imagen (opcional)" placeholder="https://..."
+                    slotProps={{ input: { startAdornment: <InputAdornment position="start"><PhotoIcon sx={{ fontSize: 18, color: 'rgba(255,255,255,0.3)' }} /></InputAdornment> } }}
                     sx={fieldSx} />
                 )} />
-              </Grid>
+              </Box>
 
               {/* Toggle activo */}
-              <Grid item xs={12}>
+              <Box sx={{ gridColumn: { xs: 'span 1', sm: 'span 2' } }}>
                 <Controller name="activo" control={productoForm.control} render={({ field }) => (
                   <FormControlLabel
                     control={<Switch checked={field.value} onChange={field.onChange} sx={switchSx} />}
                     label={<Typography sx={{ color: 'rgba(255,255,255,0.8)', fontSize: 14 }}>Publicar en catálogo inmediatamente</Typography>}
                   />
                 )} />
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </Box>
         </DialogContent>
 
@@ -629,7 +659,12 @@ export default function PerfilPage() {
 
       {/* ── Confirm delete ──────────────────────────────────────────────────── */}
       <Dialog open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} maxWidth="xs"
-        PaperProps={{ sx: { bgcolor: '#131c27', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backgroundImage: 'none' } }}>
+        slotProps={{
+          paper: {
+            sx: { bgcolor: '#131c27', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backgroundImage: 'none' }
+          }
+        }}
+      >
         <DialogTitle sx={{ color: 'white', fontWeight: 700 }}>¿Eliminar producto?</DialogTitle>
         <DialogContent>
           <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>

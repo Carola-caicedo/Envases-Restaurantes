@@ -26,7 +26,7 @@ export const useCartStore = create<CartState>()(
       proveedorNombre: null,
 
       addItem: (producto, proveedorId, proveedorNombre) => {
-        const { items, proveedorId: currentProveedor } = get();
+        const { proveedorId: currentProveedor } = get();
 
         // Si el carrito ya tiene productos de otro proveedor, limpiar primero
         if (currentProveedor && currentProveedor !== proveedorId) {

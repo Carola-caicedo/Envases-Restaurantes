@@ -1,4 +1,4 @@
-import { Box, Typography, Grid, Paper } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
 import {
   Inventory as InventoryIcon,
   Recycling as RecyclingIcon,
@@ -23,47 +23,52 @@ export default function DashboardPage() {
         Resumen operativo en tiempo real
       </Typography>
 
-      <Grid container spacing={2}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr 1fr 1fr' },
+          gap: 2,
+        }}
+      >
         {stats.map((s) => (
-          <Grid item xs={12} sm={6} lg={3} key={s.label}>
-            <Paper
-              elevation={0}
+          <Paper
+            key={s.label}
+            elevation={0}
+            sx={{
+              p: 3,
+              bgcolor: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 3,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <Box
               sx={{
-                p: 3,
-                bgcolor: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 3,
+                width: 48,
+                height: 48,
+                borderRadius: 2,
+                bgcolor: `${s.color}22`,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 2,
+                justifyContent: 'center',
+                color: s.color,
               }}
             >
-              <Box
-                sx={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 2,
-                  bgcolor: `${s.color}22`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: s.color,
-                }}
-              >
-                {s.icon}
-              </Box>
-              <Box>
-                <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>
-                  {s.label}
-                </Typography>
-                <Typography sx={{ color: 'white', fontSize: 24, fontWeight: 700 }}>
-                  {s.value}
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
+              {s.icon}
+            </Box>
+            <Box>
+              <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>
+                {s.label}
+              </Typography>
+              <Typography sx={{ color: 'white', fontSize: 24, fontWeight: 700 }}>
+                {s.value}
+              </Typography>
+            </Box>
+          </Paper>
         ))}
-      </Grid>
+      </Box>
 
       <Paper
         elevation={0}

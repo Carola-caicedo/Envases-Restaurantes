@@ -241,8 +241,11 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
               {open && (
                 <>
                   <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{ fontSize: 14, fontWeight: active ? 600 : 400 }}
+                    primary={
+                      <Typography sx={{ fontSize: 14, fontWeight: active ? 600 : 400 }}>
+                        {item.label}
+                      </Typography>
+                    }
                   />
                   {expanded ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />}
                 </>
@@ -295,8 +298,11 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
           </ListItemIcon>
           {open && (
             <ListItemText
-              primary={item.label}
-              primaryTypographyProps={{ fontSize: 14, fontWeight: active ? 600 : 400 }}
+              primary={
+                <Typography sx={{ fontSize: 14, fontWeight: active ? 600 : 400 }}>
+                  {item.label}
+                </Typography>
+              }
             />
           )}
         </ListItemButton>

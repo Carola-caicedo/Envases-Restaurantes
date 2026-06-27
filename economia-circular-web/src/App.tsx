@@ -15,6 +15,7 @@ import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
 import CarritoPage from './pages/admin/CarritoPage';
 import OrdenesPage from './pages/admin/OrdenesPage';
+import RecepcionPedidoPage from './pages/admin/RecepcionPedidoPage';
 
 // Cajero pages
 import SalidaEnvasePage from './pages/cajero/SalidaEnvasePage';
@@ -24,6 +25,8 @@ import DevolucionPage from './pages/operario/DevolucionPage';
 
 // Proveedor pages
 import PerfilPage from './pages/proveedor/PerfilPage';
+import PedidosPage from './pages/proveedor/PedidosPage';
+import DetallePedidoPage from './pages/proveedor/DetallePedidoPage';
 
 // ─── TanStack Query client ─────────────────────────────────────────────────────
 const queryClient = new QueryClient({
@@ -108,6 +111,7 @@ export default function App() {
                 <Route path="/admin/dashboard" element={<DashboardPage />} />
                 <Route path="/admin/carrito" element={<CarritoPage />} />
                 <Route path="/admin/ordenes" element={<OrdenesPage />} />
+                <Route path="/admin/ordenes/:id/recepcion" element={<RecepcionPedidoPage />} />
                 {/* Próximas etapas: */}
                 {/* <Route path="/admin/proveedores" element={<ProveedoresPage />} /> */}
                 {/* <Route path="/admin/inventario" element={<InventarioPage />} /> */}
@@ -130,7 +134,8 @@ export default function App() {
               {/* ── PROVEEDOR ──────────────────────────────────────────── */}
               <Route element={<ProtectedRoute allowedRoles={['PROVEEDOR']} />}>
                 <Route path="/proveedor/perfil" element={<PerfilPage />} />
-                {/* <Route path="/proveedor/pedidos" element={<PedidosPage />} /> */}
+                <Route path="/proveedor/pedidos" element={<PedidosPage />} />
+                <Route path="/proveedor/pedidos/:id" element={<DetallePedidoPage />} />
               </Route>
             </Route>
 

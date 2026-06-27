@@ -126,6 +126,7 @@ export default function LoginPage() {
         )}
 
         <TextField
+          variant="outlined"
           fullWidth
           label="Correo electrónico"
           type="email"
@@ -135,20 +136,23 @@ export default function LoginPage() {
           sx={{ mb: 2, ...darkInputSx }}
         />
         <TextField
+          variant="outlined"
           fullWidth
           label="Contraseña"
           type={showPwd ? 'text' : 'password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPwd((v) => !v)} edge="end" size="small" sx={{ color: 'rgba(255,255,255,0.4)' }}>
-                  {showPwd ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPwd((v) => !v)} edge="end" size="small" sx={{ color: 'rgba(255,255,255,0.4)' }}>
+                    {showPwd ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
           }}
           sx={{ mb: 3, ...darkInputSx }}
         />

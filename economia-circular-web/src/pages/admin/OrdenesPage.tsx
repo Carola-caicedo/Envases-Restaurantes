@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -12,8 +13,6 @@ import {
   TablePagination,
   Chip,
   IconButton,
-  TextField,
-  InputAdornment,
   MenuItem,
   Select,
   FormControl,
@@ -30,23 +29,21 @@ import {
   Stack,
   LinearProgress,
 } from '@mui/material';
-import {
-  Search as SearchIcon,
-  Visibility as ViewIcon,
-  KeyboardArrowDown as ExpandIcon,
-  KeyboardArrowUp as CollapseIcon,
-  FilterList as FilterIcon,
-  Refresh as RefreshIcon,
-  Store as StoreIcon,
-  LocalShipping as ShippingIcon,
-  CheckCircle as CheckIcon,
-  Cancel as CancelIcon,
-  HourglassEmpty as PendingIcon,
-  Build as PrepIcon,
-  ListAlt as OrdersIcon,
-  Close as CloseIcon,
-  Timeline as TimelineIcon,
-} from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
+import ViewIcon from '@mui/icons-material/Visibility';
+import ExpandIcon from '@mui/icons-material/KeyboardArrowDown';
+import CollapseIcon from '@mui/icons-material/KeyboardArrowUp';
+import FilterIcon from '@mui/icons-material/FilterList';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import StoreIcon from '@mui/icons-material/Store';
+import ShippingIcon from '@mui/icons-material/LocalShipping';
+import CheckIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import PendingIcon from '@mui/icons-material/HourglassEmpty';
+import PrepIcon from '@mui/icons-material/Build';
+import OrdersIcon from '@mui/icons-material/ListAlt';
+import CloseIcon from '@mui/icons-material/Close';
+import ReceiveIcon from '@mui/icons-material/AssignmentTurnedIn';
 import type { OrdenCompra, EstadoOrden } from '../../types';
 
 // ─── Paleta ────────────────────────────────────────────────────────────────────
@@ -287,6 +284,8 @@ function OrderTimeline({ orden }: { orden: OrdenCompra }) {
 // ─── Fila expandible de la tabla ───────────────────────────────────────────────
 function OrderRow({ orden, onView }: { orden: OrdenCompra; onView: (o: OrdenCompra) => void }) {
   const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
+  const isInTransit = orden.estado === 'EN_TRANSITO';
 
   return (
     <>
@@ -367,19 +366,44 @@ function OrderRow({ orden, onView }: { orden: OrdenCompra; onView: (o: OrdenComp
 
         {/* Acciones */}
         <TableCell align="center">
-          <Tooltip title="Ver detalle">
-            <IconButton
-              size="small"
-              onClick={(e) => { e.stopPropagation(); onView(orden); }}
-              sx={{
-                color: 'rgba(255,255,255,0.4)',
-                '&:hover': { color: GREEN[400], bgcolor: `${GREEN[600]}22` },
-                borderRadius: 1.5,
-              }}
-            >
-              <ViewIcon sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Tooltip>
+          <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center', alignItems: 'center' }}>
+            {isInTransit && (
+              <Tooltip title="Confirmar recepción">
+                <Button
+                  size="small"
+                  startIcon={<ReceiveIcon sx={{ fontSize: '15px !important' }} />}
+                  onClick={(e) => { e.stopPropagation(); navigate(`/admin/ordenes/${orden.id}/recepcion`); }}
+                  variant="contained"
+                  sx={{
+                    bgcolor: GREEN[500],
+                    '&:hover': { bgcolor: GREEN[400] },
+                    borderRadius: 2,
+                    fontSize: 11,
+                    py: 0.5,
+                    px: 1.2,
+                    minWidth: 'auto',
+                    whiteSpace: 'nowrap',
+                    boxShadow: `0 2px 8px ${GREEN[700]}88`,
+                  }}
+                >
+                  Recibí mi pedido
+                </Button>
+              </Tooltip>
+            )}
+            <Tooltip title="Ver detalle">
+              <IconButton
+                size="small"
+                onClick={(e) => { e.stopPropagation(); onView(orden); }}
+                sx={{
+                  color: 'rgba(255,255,255,0.4)',
+                  '&:hover': { color: GREEN[400], bgcolor: `${GREEN[600]}22` },
+                  borderRadius: 1.5,
+                }}
+              >
+                <ViewIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </TableCell>
       </TableRow>
 
@@ -444,7 +468,6 @@ function OrderRow({ orden, onView }: { orden: OrdenCompra; onView: (o: OrdenComp
 // ─── Modal de detalle de orden ─────────────────────────────────────────────────
 function OrderDetailModal({ orden, onClose }: { orden: OrdenCompra | null; onClose: () => void }) {
   if (!orden) return null;
-  const cfg = ESTADO_CONFIG[orden.estado];
 
   return (
     <Dialog
@@ -452,12 +475,14 @@ function OrderDetailModal({ orden, onClose }: { orden: OrdenCompra | null; onClo
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          bgcolor: '#161b22',
-          border: `1px solid ${GREEN[700]}55`,
-          borderRadius: 3,
-        },
+      slotProps={{
+        paper: {
+          sx: {
+            bgcolor: '#161b22',
+            border: `1px solid ${GREEN[700]}55`,
+            borderRadius: 3,
+          },
+        }
       }}
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
@@ -522,7 +547,7 @@ function OrderDetailModal({ orden, onClose }: { orden: OrdenCompra | null; onClo
         <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, mb: 1, textTransform: 'uppercase', letterSpacing: 0.5 }}>
           Productos ({orden.detalles.length})
         </Typography>
-        <Stack gap={1} sx={{ mb: 2.5 }}>
+        <Stack spacing={1} sx={{ mb: 2.5 }}>
           {orden.detalles.map((d) => (
             <Box
               key={d.id}
@@ -566,10 +591,21 @@ function OrderDetailModal({ orden, onClose }: { orden: OrdenCompra | null; onClo
         )}
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2.5 }}>
+      <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
         <Button onClick={onClose} variant="outlined" sx={{ borderColor: `${GREEN[600]}55`, color: 'rgba(255,255,255,0.5)' }}>
           Cerrar
         </Button>
+        {orden.estado === 'EN_TRANSITO' && (
+          <Button
+            variant="contained"
+            startIcon={<ReceiveIcon />}
+            onClick={() => { onClose(); }}
+            href={`/admin/ordenes/${orden.id}/recepcion`}
+            sx={{ bgcolor: GREEN[500], '&:hover': { bgcolor: GREEN[400] }, borderRadius: 2 }}
+          >
+            Confirmar recepción
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
@@ -670,34 +706,37 @@ export default function OrdenesPage() {
             background: `linear-gradient(90deg, ${GREEN[900]}99, #161b22)`,
           }}
         >
-          <TextField
-            id="ordenes-search"
-            placeholder="Buscar por número, proveedor o tracking…"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-            size="small"
+          <Box
             sx={{
+              display: 'flex',
+              alignItems: 'center',
               flex: 1,
               minWidth: 240,
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 2,
-                '& fieldset': { borderColor: `${GREEN[600]}44` },
-                '&:hover fieldset': { borderColor: GREEN[500] },
-                '&.Mui-focused fieldset': { borderColor: GREEN[400] },
-                bgcolor: `${GREEN[700]}22`,
+              bgcolor: `${GREEN[700]}22`,
+              border: `1.5px solid ${GREEN[600]}44`,
+              borderRadius: 2,
+              px: 1.5,
+              py: 0.75,
+              '&:focus-within': {
+                borderColor: GREEN[400],
+              }
+            }}
+          >
+            <SearchIcon sx={{ color: 'rgba(255,255,255,0.4)', fontSize: 18, mr: 1 }} />
+            <input
+              placeholder="Buscar por número, proveedor o tracking…"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
                 color: 'white',
-                fontSize: 14,
-              },
-              '& .MuiInputBase-input::placeholder': { color: 'rgba(255,255,255,0.3)' },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: 'rgba(255,255,255,0.4)', fontSize: 18 }} />
-                </InputAdornment>
-              ),
-            }}
-          />
+                width: '100%',
+                fontSize: '14px',
+              }}
+            />
+          </Box>
 
           <FormControl size="small" sx={{ minWidth: 160 }}>
             <InputLabel
@@ -721,11 +760,13 @@ export default function OrdenesPage() {
                 color: 'white',
                 fontSize: 14,
               }}
-              MenuProps={{
-                PaperProps: {
-                  sx: { bgcolor: '#1a2332', border: `1px solid ${GREEN[700]}55`, borderRadius: 2 },
-                },
-              }}
+               MenuProps={{
+                 slotProps: {
+                   paper: {
+                     sx: { bgcolor: '#1a2332', border: `1px solid ${GREEN[700]}55`, borderRadius: 2 }
+                   }
+                 }
+               }}
             >
               <MenuItem value="TODOS" sx={{ color: 'white', '&:hover': { bgcolor: `${GREEN[600]}22` } }}>
                 Todos los estados

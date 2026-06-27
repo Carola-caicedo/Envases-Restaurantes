@@ -12,7 +12,6 @@ import {
   TableRow,
   IconButton,
   Button,
-  TextField,
   Chip,
   Avatar,
   Divider,
@@ -22,20 +21,17 @@ import {
   DialogContentText,
   DialogActions,
   Tooltip,
-  Skeleton,
   Alert,
 } from '@mui/material';
-import {
-  Delete as DeleteIcon,
-  Add as AddIcon,
-  Remove as RemoveIcon,
-  ShoppingCart as CartIcon,
-  Store as StoreIcon,
-  CheckCircle as CheckIcon,
-  Warning as WarningIcon,
-  ArrowBack as BackIcon,
-  ShoppingBag as BagIcon,
-} from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import CartIcon from '@mui/icons-material/ShoppingCart';
+import StoreIcon from '@mui/icons-material/Store';
+import CheckIcon from '@mui/icons-material/CheckCircle';
+import WarningIcon from '@mui/icons-material/Warning';
+import BackIcon from '@mui/icons-material/ArrowBack';
+import BagIcon from '@mui/icons-material/ShoppingBag';
 import { toast } from 'react-toastify';
 import { useCartStore } from '../../store/cartStore';
 
@@ -69,12 +65,6 @@ const MATERIAL_LABELS: Record<string, string> = {
   PLASTICO_REUTILIZABLE: 'Plástico',
   BAMBU: 'Bambú',
   CERAMICA: 'Cerámica',
-};
-
-// ─── Datos simulados de proveedores (para mockear el carrito con datos reales) ─
-const MOCK_PROVEEDOR_INFO: Record<string, { nombre: string; email: string }> = {
-  prov_001: { nombre: 'EcoEnvases Colombia S.A.S', email: 'pedidos@ecoenvases.co' },
-  prov_002: { nombre: 'Green Pack Ltda.', email: 'compras@greenpack.com.co' },
 };
 
 // ─── Componente Carrito vacío ──────────────────────────────────────────────────
@@ -270,7 +260,7 @@ function OrderSummary({ subtotal, totalItems, proveedorNombre, onConfirm, onClea
 // ─── Página principal: CarritoPage ────────────────────────────────────────────
 export default function CarritoPage() {
   const navigate = useNavigate();
-  const { items, proveedorId, proveedorNombre, removeItem, updateCantidad, clearCart } =
+  const { items, proveedorNombre, removeItem, updateCantidad, clearCart } =
     useCartStore();
   const totalItems = useCartStore((s) => s.totalItems());
   const totalPrecio = useCartStore((s) => s.totalPrecio());
@@ -528,25 +518,34 @@ export default function CarritoPage() {
                           <RemoveIcon sx={{ fontSize: 16 }} />
                         </IconButton>
 
-                        <TextField
+                        <Box
+                          component="input"
+                          type="number"
                           value={item.cantidad}
-                          onChange={(e) => {
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             const val = parseInt(e.target.value);
                             if (!isNaN(val) && val > 0) updateCantidad(item.producto.id, val);
                           }}
-                          inputProps={{
-                            min: 1,
-                            style: { textAlign: 'center', padding: '4px 0', fontSize: 14, color: 'white' },
-                          }}
+                          min={1}
                           sx={{
                             width: 56,
-                            '& .MuiOutlinedInput-root': {
-                              borderRadius: 1.5,
-                              '& fieldset': { borderColor: `${GREEN[600]}55` },
-                              '&:hover fieldset': { borderColor: GREEN[500] },
-                              '&.Mui-focused fieldset': { borderColor: GREEN[400] },
-                              bgcolor: `${GREEN[700]}22`,
+                            height: 32,
+                            textAlign: 'center',
+                            bgcolor: `${GREEN[700]}22`,
+                            color: 'white',
+                            border: `1px solid ${GREEN[600]}55`,
+                            borderRadius: 1.5,
+                            fontSize: 14,
+                            outline: 'none',
+                            '&:focus': {
+                              borderColor: GREEN[400],
                             },
+                            // Ocultar flechitas nativas del input type number
+                            '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+                              WebkitAppearance: 'none',
+                              margin: 0,
+                            },
+                            MozAppearance: 'textfield',
                           }}
                         />
 
@@ -648,13 +647,15 @@ export default function CarritoPage() {
       <Dialog
         open={confirmDialogOpen}
         onClose={() => setConfirmDialogOpen(false)}
-        PaperProps={{
-          sx: {
-            bgcolor: '#161b22',
-            border: `1px solid ${GREEN[700]}55`,
-            borderRadius: 3,
-            minWidth: 360,
-          },
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: '#161b22',
+              border: `1px solid ${GREEN[700]}55`,
+              borderRadius: 3,
+              minWidth: 360,
+            },
+          }
         }}
       >
         <DialogTitle sx={{ color: 'white', fontWeight: 700 }}>
@@ -694,8 +695,10 @@ export default function CarritoPage() {
       <Dialog
         open={clearDialogOpen}
         onClose={() => setClearDialogOpen(false)}
-        PaperProps={{
-          sx: { bgcolor: '#161b22', border: '1px solid #fc818133', borderRadius: 3 },
+        slotProps={{
+          paper: {
+            sx: { bgcolor: '#161b22', border: '1px solid #fc818133', borderRadius: 3 }
+          }
         }}
       >
         <DialogTitle sx={{ color: 'white', fontWeight: 700 }}>¿Vaciar el carrito?</DialogTitle>
@@ -725,14 +728,16 @@ export default function CarritoPage() {
       {/* ── Diálogo de éxito ─────────────────────────────────────────────── */}
       <Dialog
         open={successDialogOpen}
-        PaperProps={{
-          sx: {
-            bgcolor: '#161b22',
-            border: `1px solid ${GREEN[600]}55`,
-            borderRadius: 3,
-            minWidth: 400,
-            textAlign: 'center',
-          },
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: '#161b22',
+              border: `1px solid ${GREEN[600]}55`,
+              borderRadius: 3,
+              minWidth: 400,
+              textAlign: 'center',
+            },
+          }
         }}
       >
         <DialogContent sx={{ pt: 4, pb: 3 }}>

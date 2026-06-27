@@ -167,14 +167,16 @@ export default function Header({ sidebarWidth }: HeaderProps) {
                 onClose={handleMenuClose}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                PaperProps={{
-                  sx: {
-                    mt: 1,
-                    bgcolor: '#1a2332',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 2,
-                    minWidth: 180,
-                  },
+                slotProps={{
+                  paper: {
+                    sx: {
+                      mt: 1,
+                      bgcolor: '#1a2332',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 2,
+                      minWidth: 180,
+                    },
+                  }
                 }}
               >
                 <Box sx={{ px: 2, py: 1.5 }}>
