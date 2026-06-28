@@ -29,3 +29,8 @@ export const despacharOrdenAPI = async (ordenId: string) => {
   const res = await api.put(`/ordenes/${ordenId}/despachar`);
   return res.data.data;
 };
+
+export const recibirOrdenAPI = async (ordenId: string) => {
+  const res = await api.put(`/ordenes/${ordenId}/recibir`);
+  return res.data.data;
+};

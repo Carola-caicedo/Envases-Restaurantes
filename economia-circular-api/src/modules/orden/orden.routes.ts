@@ -12,6 +12,7 @@ router.post('/carrito', authorize(['ADMIN', 'CAJERO']), ordenController.addToCar
 
 router.post('/', authorize(['ADMIN']), ordenController.crearOrden);
 router.get('/restaurante', authorize(['ADMIN', 'CAJERO']), ordenController.listarOrdenesRestaurante);
+router.put('/:id/recibir', authorize(['ADMIN', 'CAJERO']), ordenController.recibirOrden);
 
 // Rutas del Proveedor
 router.get('/proveedor', authorize(['PROVEEDOR']), ordenController.listarOrdenesProveedor);

@@ -73,13 +73,19 @@ const NAV_ITEMS: NavItemDef[] = [
     roles: ['ADMIN'],
   },
   {
+    label: 'Gestión Cuentas',
+    path: '/admin/proveedores',
+    icon: <PersonIcon />,
+    roles: ['ADMIN'],
+  },
+  {
     label: 'Proveedores',
     icon: <StoreIcon />,
-    roles: ['ADMIN'],
+    roles: ['ADMIN', 'CAJERO'],
     children: [
-      { label: 'Explorar catálogos', path: '/admin/proveedores', icon: <StoreIcon />, roles: ['ADMIN'] },
-      { label: 'Carrito de compra', path: '/admin/carrito', icon: <CartIcon />, roles: ['ADMIN'] },
-      { label: 'Órdenes', path: '/admin/ordenes', icon: <OrdersIcon />, roles: ['ADMIN'] },
+      { label: 'Explorar catálogos', path: '/cajero/proveedores', icon: <StoreIcon />, roles: ['ADMIN', 'CAJERO'] },
+      { label: 'Carrito de compra', path: '/cajero/carrito', icon: <CartIcon />, roles: ['ADMIN', 'CAJERO'] },
+      { label: 'Órdenes', path: '/cajero/ordenes', icon: <OrdersIcon />, roles: ['ADMIN', 'CAJERO'] },
     ],
   },
   {

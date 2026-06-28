@@ -8,8 +8,8 @@ export const addToCart = async (req: Request, res: Response, next: NextFunction)
   try {
     const { productoId, cantidad, precioUnitario, proveedorId } = req.body;
     
-    // Obtenemos el ID del restaurante del usuario actual
-    const restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    let restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    if (!restaurante && req.user!.rol === 'ADMIN') restaurante = await prisma.restaurante.findFirst();
     if (!restaurante) return res.status(403).json({ success: false, message: 'Usuario no es administrador de un restaurante' });
 
     const cart = carritoService.addToCart(restaurante.id, { productoId, cantidad, precioUnitario, proveedorId });
@@ -21,7 +21,8 @@ export const addToCart = async (req: Request, res: Response, next: NextFunction)
 
 export const getCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    let restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    if (!restaurante && req.user!.rol === 'ADMIN') restaurante = await prisma.restaurante.findFirst();
     if (!restaurante) return res.status(403).json({ success: false, message: 'Usuario no es administrador de un restaurante' });
     
     res.json({ success: true, data: carritoService.getCart(restaurante.id) });
@@ -33,7 +34,8 @@ export const getCart = async (req: Request, res: Response, next: NextFunction) =
 // Métodos de Órdenes
 export const crearOrden = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    let restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    if (!restaurante && req.user!.rol === 'ADMIN') restaurante = await prisma.restaurante.findFirst();
     if (!restaurante) return res.status(403).json({ success: false, message: 'Usuario no es administrador de un restaurante' });
 
     const orden = await ordenService.crearOrden(restaurante.id, req.body.proveedorId);
@@ -45,7 +47,8 @@ export const crearOrden = async (req: Request, res: Response, next: NextFunction
 
 export const listarOrdenesRestaurante = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    let restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    if (!restaurante && req.user!.rol === 'ADMIN') restaurante = await prisma.restaurante.findFirst();
     if (!restaurante) return res.status(403).json({ success: false, message: 'Usuario no es administrador de un restaurante' });
 
     const ordenes = await ordenService.getOrdenesPorRestaurante(restaurante.id);
@@ -73,6 +76,19 @@ export const despacharOrden = async (req: Request, res: Response, next: NextFunc
     if (!perfil) return res.status(403).json({ success: false, message: 'Perfil de proveedor no encontrado' });
 
     const resultado = await ordenService.aceptarYDespacharOrden(req.params.id, perfil.id);
+    res.json({ success: true, data: resultado });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const recibirOrden = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    let restaurante = await prisma.restaurante.findFirst({ where: { administradorId: req.user!.userId }});
+    if (!restaurante && req.user!.rol === 'ADMIN') restaurante = await prisma.restaurante.findFirst();
+    if (!restaurante) return res.status(403).json({ success: false, message: 'Usuario no es administrador de un restaurante' });
+
+    const resultado = await ordenService.confirmarRecepcion(req.params.id, restaurante.id);
     res.json({ success: true, data: resultado });
   } catch (error) {
     next(error);

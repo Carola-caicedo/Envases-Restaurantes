@@ -11,6 +11,7 @@ interface CartItem {
 interface CartState {
   items: CartItem[];
   addToCart: (item: CartItem) => void;
+  setItems: (items: CartItem[]) => void;
   clearCart: () => void;
   total: () => number;
 }
@@ -28,6 +29,7 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
     return { items: [...state.items, item] };
   }),
+  setItems: (items) => set({ items }),
   clearCart: () => set({ items: [] }),
   total: () => get().items.reduce((sum, item) => sum + (item.precioUnitario * item.cantidad), 0)
 }));

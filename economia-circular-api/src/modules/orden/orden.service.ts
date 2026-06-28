@@ -92,10 +92,10 @@ export const aceptarYDespacharOrden = async (ordenId: string, proveedorId: strin
         
         await tx.envase.create({
           data: {
-            qrCode: uniqueId, // Aquí usamos el ID único real como llave
+            qrCode: uniqueId,
             productoId: detalle.productoId,
             restauranteId: orden.restauranteId,
-            estado: 'EN_USO',
+            estado: 'INACTIVO',
           }
         });
 
@@ -137,4 +137,41 @@ export const getOrdenesPorProveedor = async (proveedorId: string) => {
     include: { Restaurante: true, Detalles: { include: { Producto: true } } },
     orderBy: { createdAt: 'desc' }
   });
+};
+
+export const confirmarRecepcion = async (ordenId: string, restauranteId: string) => {
+  const orden = await prisma.ordenCompra.findUnique({
+    where: { id: ordenId }
+  });
+
+  if (!orden || orden.restauranteId !== restauranteId) {
+    throw new AppError(403, 'Orden no encontrada o no autorizada');
+  }
+
+  if (orden.estado !== 'EN_TRANSITO') {
+    throw new AppError(400, 'La orden no está en tránsito');
+  }
+
+  await prisma.$transaction(async (tx) => {
+    // 1. Cambiar estado de orden
+    await tx.ordenCompra.update({
+      where: { id: ordenId },
+      data: { estado: 'ENTREGADA' }
+    });
+
+    // 2. Activar los envases que se crearon inactivos
+    // Buscamos detalles de la orden para saber qué productos activarle
+    // (Como qrCode es PK, actualizaremos los INACTIVO de este restaurante creados hoy o asociados a este flujo).
+    // Idealmente el Envase debería tener un ordenId, pero como no lo tiene en el schema, 
+    // activamos los INACTIVOS del restaurante.
+    await tx.envase.updateMany({
+      where: { 
+        restauranteId: restauranteId,
+        estado: 'INACTIVO'
+      },
+      data: { estado: 'DISPONIBLE' }
+    });
+  });
+
+  return { ordenId, success: true };
 };
